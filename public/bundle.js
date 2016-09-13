@@ -21410,21 +21410,67 @@
 	'use strict';
 
 	var React = __webpack_require__(1);
-
+	var BookmarkList = __webpack_require__(173);
+	var iniialList = [{ key: 1, name: "Physics", type: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { key: 2, name: "Maths", type: "TEXTBOOK", desc: "a textbook on Maths ..", completePercentage: null, currentpage: 23 }, { key: 3, name: "Physics", type: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { key: 4, name: "Physics", type: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }];
 	var App = React.createClass({
 	    displayName: 'App',
 
 
 	    render: function render() {
 	        return React.createElement(
-	            'h1',
-	            null,
-	            'Hello React + webpack'
+	            'div',
+	            { className: 'container-fluid' },
+	            ' ',
+	            React.createElement(
+	                'h1',
+	                null,
+	                ' React h20'
+	            ),
+	            React.createElement(BookmarkList, { list: iniialList })
 	        );
 	    }
 
 	});
 	module.exports = App;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(1);
+
+	var BookmarkList = React.createClass({
+	    displayName: 'BookmarkList',
+
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	                'p',
+	                null,
+	                'A List 3'
+	            ),
+	            React.createElement(
+	                'ul',
+	                null,
+	                this.props.list.map(function (item, i) {
+	                    console.log(item);
+	                    return React.createElement(
+	                        'li',
+	                        null,
+	                        ' ',
+	                        item.name
+	                    );
+	                })
+	            )
+	        );
+	    }
+	});
+
+	module.exports = BookmarkList;
 
 /***/ }
 /******/ ]);
