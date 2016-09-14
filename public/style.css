@@ -1,0 +1,20 @@
+.TEXTBOOK{
+    color: #31708f;
+    background-color: #d9edf7;
+}
+.NOVEL{
+    color: #ab3345 ;
+    background-color: #11208f;
+}
+.EBOOK{
+    color: #efefef;
+    background-color: #000;
+}
+.add-book .form-control{
+    border-radius: 0px;
+}
+.add-book .form-control + .add-book .form-control,
+.add-book .btn{
+    margin-left:-1px;
+    border-radius: 0px;
+}
