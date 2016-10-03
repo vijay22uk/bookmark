@@ -1,20 +1,24 @@
 import {EventEmitter } from "events";
 import dispatcher from "../dispatcher";
+import helper from "../helpers/Resthelper";
 var Book = require("../models/Book");
 class BookmarkStore extends EventEmitter {
     constructor() {
         super()
-        this.BookList = [
-            { id: 1, name: "Physics", bType: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 },
-            { id: 2, name: "Maths", bType: "TEXTBOOK", desc: "a textbook on Maths ..", completePercentage: null, currentpage: 23 },
-            { id: 3, name: "Physics", bType: "NOVEL", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 },
-            { id: 4, name: "Physics", bType: "EBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 },
-        ]
+        this.BookList = [];
+        helper.get("api/books")
+        .then(this.setData.bind(this))
+    }
+    setData(data){
+        debugger
+        this.BookList = data ;
+        this.emit("change");
     }
     getAll() {
         return this.BookList;
     }
     createBook(book) {
+        
         this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
         // emit to componenets
         this.emit("change");
@@ -31,9 +35,11 @@ class BookmarkStore extends EventEmitter {
         switch(action.type){
             case "CREATE_BOOK":{
                 this.createBook({name:action.name,bType:action.bType})
+                break;
             }
             case "DELETE_BOOK":{
                 this.deleteBook(action.payload);
+                  break;
             }
         }
     }

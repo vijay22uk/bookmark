@@ -4,9 +4,12 @@
   "description": "a bookmark manager",
   "main": "server/main.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
+    "ejs": "^2.5.2",
     "express": "^4.14.0",
     "guid": "0.0.12",
+    "jquery": "^3.1.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
   },
