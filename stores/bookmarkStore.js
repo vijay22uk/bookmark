@@ -17,6 +17,7 @@ class BookmarkStore extends EventEmitter {
     createBook(book) {
         this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
         // emit to componenets
+        console.log("added book to store")
         this.emit("add");
     }
     handleActions(action) {

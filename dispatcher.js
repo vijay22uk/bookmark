@@ -6,14 +6,14 @@ var listeners = {};
 module.exports = {
     register: function (cb) {
         var id = guid.raw();
+        console.log('adding')
         listeners[id] = cb;
         return id;
     },
     dispatch: function (payload) {
+        console.log(listeners);
         for (var id in listeners) {
-            if (listeners.hasOwnProperty(id)) {
-                listeners(payload);
-            }
+                listeners[id](payload);
         }
     }
 

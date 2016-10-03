@@ -21413,21 +21413,32 @@
 	var BookmarkList = __webpack_require__(173);
 
 	var App = React.createClass({
-	        displayName: 'App',
+	    displayName: 'App',
+	    getInitialState: function getInitialState() {
+	        return {
+	            allowAdd: true
+	        };
+	    },
+	    toggleAdd: function toggleAdd(e) {
+	        debugger;
+	        var _value = e.target.checked;
+	        this.setState({ allowAdd: _value });
+	    },
 
-	        render: function render() {
-	                return React.createElement(
-	                        'div',
-	                        { className: 'container-fluid' },
-	                        ' ',
-	                        React.createElement(
-	                                'h1',
-	                                null,
-	                                ' React h20'
-	                        ),
-	                        React.createElement(BookmarkList, { allowAdd: true })
-	                );
-	        }
+	    render: function render() {
+	        return React.createElement(
+	            'div',
+	            { className: 'container-fluid' },
+	            ' ',
+	            React.createElement(
+	                'h1',
+	                null,
+	                ' React h20',
+	                React.createElement('input', { type: 'checkbox', className: 'form-control-xm', checked: this.state.allowAdd, onChange: this.toggleAdd })
+	            ),
+	            React.createElement(BookmarkList, { allowAdd: this.state.allowAdd })
+	        );
+	    }
 
 	});
 	module.exports = App;
@@ -21441,11 +21452,27 @@
 	var React = __webpack_require__(1);
 	var Bookmark = __webpack_require__(174);
 	var bookstore = __webpack_require__(175);
+	var action = __webpack_require__(180);
 	var BookmarkList = React.createClass({
 	    displayName: 'BookmarkList',
+	    componentWillMount: function componentWillMount() {
+	        bookstore.on('add', this.refresh);
+	    },
+	    refresh: function refresh() {
+	        this.setState({ list: bookstore.getAll(),
+	            input: "" });
+	    },
+	    handleInputName: function handleInputName(e) {
+	        this.setState({ input: e.target.value });
+	    },
+	    addBook: function addBook(e) {
+	        e.preventDefault();
+	        action.createBook(this.state.input);
+	    },
 	    getInitialState: function getInitialState() {
 	        return {
-	            list: bookstore.getAll()
+	            list: bookstore.getAll(),
+	            input: ""
 	        };
 	    },
 
@@ -21466,8 +21493,8 @@
 	                { className: 'add-book' },
 	                React.createElement(
 	                    'form',
-	                    { className: 'form-inline' },
-	                    React.createElement('input', { className: 'form-control' }),
+	                    { className: 'form-inline', onSubmit: this.addBook },
+	                    React.createElement('input', { className: 'form-control', value: this.state.input, onChange: this.handleInputName }),
 	                    React.createElement(
 	                        'select',
 	                        { className: 'form-control' },
@@ -21501,6 +21528,7 @@
 
 	var Bookmark = React.createClass({
 	    displayName: "Bookmark",
+
 
 	    render: function render() {
 	        return React.createElement(
@@ -21566,6 +21594,7 @@
 	        value: function createBook(book) {
 	            this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
 	            // emit to componenets
+	            console.log("added book to store");
 	            this.emit("add");
 	        }
 	    }, {
@@ -21916,14 +21945,14 @@
 	module.exports = {
 	    register: function register(cb) {
 	        var id = _guid2.default.raw();
+	        console.log('adding');
 	        listeners[id] = cb;
 	        return id;
 	    },
 	    dispatch: function dispatch(payload) {
+	        console.log(listeners);
 	        for (var id in listeners) {
-	            if (listeners.hasOwnProperty(id)) {
-	                listeners(payload);
-	            }
+	            listeners[id](payload);
 	        }
 	    }
 
@@ -22018,6 +22047,39 @@
 	};
 
 	module.exports = Book;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createBook = createBook;
+	exports.deleteBook = deleteBook;
+
+	var _dispatcher = __webpack_require__(177);
+
+	var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function createBook(name, btype) {
+	    _dispatcher2.default.dispatch({
+	        type: "CREATE_BOOK",
+	        name: name,
+	        btype: btype
+	    });
+	}
+
+	function deleteBook(id) {
+	    _dispatcher2.default.dispatch({
+	        type: "DELETE_BOOK",
+	        id: id
+	    });
+	}
 
 /***/ }
 /******/ ]);
