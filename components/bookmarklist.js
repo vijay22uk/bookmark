@@ -4,7 +4,7 @@ var bookstore = require("../stores/BookmarkStore");
 var action = require("../actions/book");
 var BookmarkList = React.createClass({
     componentWillMount() {
-        bookstore.on('add', this.refresh);
+        bookstore.on('change', this.refresh);
     },
     refresh(){
         this.setState({ list:  bookstore.getAll(),

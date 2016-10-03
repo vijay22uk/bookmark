@@ -21434,7 +21434,7 @@
 	                'h1',
 	                null,
 	                ' React h20',
-	                React.createElement('input', { type: 'checkbox', className: 'form-control-xm', checked: this.state.allowAdd, onChange: this.toggleAdd })
+	                React.createElement('input', { type: 'checkbox', checked: this.state.allowAdd, onChange: this.toggleAdd })
 	            ),
 	            React.createElement(BookmarkList, { allowAdd: this.state.allowAdd })
 	        );
@@ -21451,12 +21451,12 @@
 
 	var React = __webpack_require__(1);
 	var Bookmark = __webpack_require__(174);
-	var bookstore = __webpack_require__(175);
-	var action = __webpack_require__(180);
+	var bookstore = __webpack_require__(178);
+	var action = __webpack_require__(175);
 	var BookmarkList = React.createClass({
 	    displayName: 'BookmarkList',
 	    componentWillMount: function componentWillMount() {
-	        bookstore.on('add', this.refresh);
+	        bookstore.on('change', this.refresh);
 	    },
 	    refresh: function refresh() {
 	        this.setState({ list: bookstore.getAll(),
@@ -21525,10 +21525,13 @@
 	"use strict";
 
 	var React = __webpack_require__(1);
-
+	var action = __webpack_require__(175);
 	var Bookmark = React.createClass({
 	    displayName: "Bookmark",
-
+	    deleteBook: function deleteBook(e) {
+	        e.preventDefault();
+	        action.deleteBook(this.props.item);
+	    },
 
 	    render: function render() {
 	        return React.createElement(
@@ -21540,6 +21543,11 @@
 	                "span",
 	                { className: "badge" },
 	                this.props.item.currentpage
+	            ),
+	            React.createElement(
+	                "span",
+	                { className: "badge", onClick: this.deleteBook },
+	                "×"
 	            )
 	        );
 	    }
@@ -21554,11 +21562,145 @@
 
 	"use strict";
 
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createBook = createBook;
+	exports.deleteBook = deleteBook;
+
+	var _dispatcher = __webpack_require__(176);
+
+	var _dispatcher2 = _interopRequireDefault(_dispatcher);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function createBook(name, btype) {
+	    _dispatcher2.default.dispatch({
+	        type: "CREATE_BOOK",
+	        name: name,
+	        btype: btype
+	    });
+	}
+
+	function deleteBook(book) {
+	    _dispatcher2.default.dispatch({
+	        type: "DELETE_BOOK",
+	        payload: book
+	    });
+	}
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _guid = __webpack_require__(177);
+
+	var _guid2 = _interopRequireDefault(_guid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var listeners = {}; // import {Dispatcher} from 'flux';
+	// export default new Dispatcher;
+
+
+	module.exports = {
+	    register: function register(cb) {
+	        var id = _guid2.default.raw();
+	        console.log('adding');
+	        listeners[id] = cb;
+	        return id;
+	    },
+	    dispatch: function dispatch(payload) {
+	        console.log(listeners);
+	        for (var id in listeners) {
+	            listeners[id](payload);
+	        }
+	    }
+
+	};
+
+/***/ },
+/* 177 */
+/***/ function(module, exports) {
+
+	(function () {
+	  var validator = new RegExp("^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$", "i");
+
+	  function gen(count) {
+	    var out = "";
+	    for (var i=0; i<count; i++) {
+	      out += (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+	    }
+	    return out;
+	  }
+
+	  function Guid(guid) {
+	    if (!guid) throw new TypeError("Invalid argument; `value` has no value.");
+	      
+	    this.value = Guid.EMPTY;
+	    
+	    if (guid && guid instanceof Guid) {
+	      this.value = guid.toString();
+
+	    } else if (guid && Object.prototype.toString.call(guid) === "[object String]" && Guid.isGuid(guid)) {
+	      this.value = guid;
+	    }
+	    
+	    this.equals = function(other) {
+	      // Comparing string `value` against provided `guid` will auto-call
+	      // toString on `guid` for comparison
+	      return Guid.isGuid(other) && this.value == other;
+	    };
+
+	    this.isEmpty = function() {
+	      return this.value === Guid.EMPTY;
+	    };
+	    
+	    this.toString = function() {
+	      return this.value;
+	    };
+	    
+	    this.toJSON = function() {
+	      return this.value;
+	    };
+	  };
+
+	  Guid.EMPTY = "00000000-0000-0000-0000-000000000000";
+
+	  Guid.isGuid = function(value) {
+	    return value && (value instanceof Guid || validator.test(value.toString()));
+	  };
+
+	  Guid.create = function() {
+	    return new Guid([gen(2), gen(1), gen(1), gen(1), gen(3)].join("-"));
+	  };
+
+	  Guid.raw = function() {
+	    return [gen(2), gen(1), gen(1), gen(1), gen(3)].join("-");
+	  };
+
+	  if(typeof module != 'undefined' && module.exports) {
+	    module.exports = Guid;
+	  }
+	  else if (typeof window != 'undefined') {
+	    window.Guid = Guid;
+	  }
+	})();
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _events = __webpack_require__(176);
+	var _events = __webpack_require__(179);
 
-	var _dispatcher = __webpack_require__(177);
+	var _dispatcher = __webpack_require__(176);
 
 	var _dispatcher2 = _interopRequireDefault(_dispatcher);
 
@@ -21570,7 +21712,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Book = __webpack_require__(179);
+	var Book = __webpack_require__(180);
 
 	var BookmarkStore = function (_EventEmitter) {
 	    _inherits(BookmarkStore, _EventEmitter);
@@ -21580,7 +21722,7 @@
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BookmarkStore).call(this));
 
-	        _this.BookList = [{ key: 1, name: "Physics", bType: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { key: 2, name: "Maths", bType: "TEXTBOOK", desc: "a textbook on Maths ..", completePercentage: null, currentpage: 23 }, { key: 3, name: "Physics", bType: "NOVEL", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { key: 4, name: "Physics", bType: "EBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }];
+	        _this.BookList = [{ id: 1, name: "Physics", bType: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { id: 2, name: "Maths", bType: "TEXTBOOK", desc: "a textbook on Maths ..", completePercentage: null, currentpage: 23 }, { id: 3, name: "Physics", bType: "NOVEL", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }, { id: 4, name: "Physics", bType: "EBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 }];
 	        return _this;
 	    }
 
@@ -21595,7 +21737,16 @@
 	            this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
 	            // emit to componenets
 	            console.log("added book to store");
-	            this.emit("add");
+	            this.emit("change");
+	        }
+	    }, {
+	        key: "deleteBook",
+	        value: function deleteBook(book) {
+	            var index = this.BookList.findIndex(function (_item) {
+	                return _item.id === book.id;
+	            });
+	            this.BookList.splice(index, 1);
+	            this.emit("change");
 	        }
 	    }, {
 	        key: "handleActions",
@@ -21605,6 +21756,10 @@
 	                case "CREATE_BOOK":
 	                    {
 	                        this.createBook({ name: action.name, bType: action.bType });
+	                    }
+	                case "DELETE_BOOK":
+	                    {
+	                        this.deleteBook(action.payload);
 	                    }
 	            }
 	        }
@@ -21619,7 +21774,7 @@
 	module.exports = bookmarkStore;
 
 /***/ },
-/* 176 */
+/* 179 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -21927,108 +22082,7 @@
 
 
 /***/ },
-/* 177 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _guid = __webpack_require__(178);
-
-	var _guid2 = _interopRequireDefault(_guid);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var listeners = {}; // import {Dispatcher} from 'flux';
-	// export default new Dispatcher;
-
-
-	module.exports = {
-	    register: function register(cb) {
-	        var id = _guid2.default.raw();
-	        console.log('adding');
-	        listeners[id] = cb;
-	        return id;
-	    },
-	    dispatch: function dispatch(payload) {
-	        console.log(listeners);
-	        for (var id in listeners) {
-	            listeners[id](payload);
-	        }
-	    }
-
-	};
-
-/***/ },
-/* 178 */
-/***/ function(module, exports) {
-
-	(function () {
-	  var validator = new RegExp("^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$", "i");
-
-	  function gen(count) {
-	    var out = "";
-	    for (var i=0; i<count; i++) {
-	      out += (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-	    }
-	    return out;
-	  }
-
-	  function Guid(guid) {
-	    if (!guid) throw new TypeError("Invalid argument; `value` has no value.");
-	      
-	    this.value = Guid.EMPTY;
-	    
-	    if (guid && guid instanceof Guid) {
-	      this.value = guid.toString();
-
-	    } else if (guid && Object.prototype.toString.call(guid) === "[object String]" && Guid.isGuid(guid)) {
-	      this.value = guid;
-	    }
-	    
-	    this.equals = function(other) {
-	      // Comparing string `value` against provided `guid` will auto-call
-	      // toString on `guid` for comparison
-	      return Guid.isGuid(other) && this.value == other;
-	    };
-
-	    this.isEmpty = function() {
-	      return this.value === Guid.EMPTY;
-	    };
-	    
-	    this.toString = function() {
-	      return this.value;
-	    };
-	    
-	    this.toJSON = function() {
-	      return this.value;
-	    };
-	  };
-
-	  Guid.EMPTY = "00000000-0000-0000-0000-000000000000";
-
-	  Guid.isGuid = function(value) {
-	    return value && (value instanceof Guid || validator.test(value.toString()));
-	  };
-
-	  Guid.create = function() {
-	    return new Guid([gen(2), gen(1), gen(1), gen(1), gen(3)].join("-"));
-	  };
-
-	  Guid.raw = function() {
-	    return [gen(2), gen(1), gen(1), gen(1), gen(3)].join("-");
-	  };
-
-	  if(typeof module != 'undefined' && module.exports) {
-	    module.exports = Guid;
-	  }
-	  else if (typeof window != 'undefined') {
-	    window.Guid = Guid;
-	  }
-	})();
-
-
-/***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22047,39 +22101,6 @@
 	};
 
 	module.exports = Book;
-
-/***/ },
-/* 180 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.createBook = createBook;
-	exports.deleteBook = deleteBook;
-
-	var _dispatcher = __webpack_require__(177);
-
-	var _dispatcher2 = _interopRequireDefault(_dispatcher);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function createBook(name, btype) {
-	    _dispatcher2.default.dispatch({
-	        type: "CREATE_BOOK",
-	        name: name,
-	        btype: btype
-	    });
-	}
-
-	function deleteBook(id) {
-	    _dispatcher2.default.dispatch({
-	        type: "DELETE_BOOK",
-	        id: id
-	    });
-	}
 
 /***/ }
 /******/ ]);

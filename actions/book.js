@@ -8,9 +8,9 @@ export function createBook(name, btype) {
     })
 }
 
-export function deleteBook(id) {
+export function deleteBook(book) {
     dispatcher.dispatch({
         type: "DELETE_BOOK",
-        id:id
+        payload:book
     })
 }
