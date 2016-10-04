@@ -18,10 +18,14 @@ class BookmarkStore extends EventEmitter {
         return this.BookList;
     }
     createBook(book) {
-        
-        this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
+        var _book = new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage)
+        this.BookList.push(_book);
         // emit to componenets
         this.emit("change");
+        helper.post("api/books",_book)
+        .then(function () {
+            console.log("posted to server");
+        })
     }
     deleteBook(book){
         var index = this.BookList.findIndex(function(_item) {

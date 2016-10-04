@@ -9,4 +9,8 @@ module.exports = function (app) {
     .get(function(req,res) {
         res.send(books);
     })
+    .post(function(req,res) {
+        var book = req.body;
+        books.push(book);
+    })
 }

@@ -21746,10 +21746,13 @@
 	    }, {
 	        key: "createBook",
 	        value: function createBook(book) {
-
-	            this.BookList.push(new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage));
+	            var _book = new Book(book.name, book.bType, book.desc, book.completePercentage, book.currentpage);
+	            this.BookList.push(_book);
 	            // emit to componenets
 	            this.emit("change");
+	            _Resthelper2.default.post("api/books", _book).then(function () {
+	                console.log("posted to server");
+	            });
 	        }
 	    }, {
 	        key: "deleteBook",
@@ -22107,10 +22110,20 @@
 
 	    get: function get(url) {
 	        return new Promise(function (success, error) {
-
 	            $.ajax({
 	                url: url,
 	                dataType: "json",
+	                success: success,
+	                error: error
+	            });
+	        });
+	    },
+	    post: function post(url, data) {
+	        return new Promise(function (success, error) {
+	            $.ajax({
+	                url: url,
+	                type: "POST",
+	                data: data,
 	                success: success,
 	                error: error
 	            });
