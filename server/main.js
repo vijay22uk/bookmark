@@ -3,6 +3,11 @@ var express = require("express");
 var app = express();
 var port = 8080;
 var parser = require('body-parser');
+require('./database.js');
+
+
+
+
 // serving public files
 app.use(express.static('./public'));
 app.use(express.static('./node_modules/bootstrap/dist'));
