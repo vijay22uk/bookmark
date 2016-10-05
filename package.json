@@ -4,6 +4,7 @@
   "description": "a bookmark manager",
   "main": "server/main.js",
   "dependencies": {
+    "babel": "^6.5.2",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
     "ejs": "^2.5.2",

@@ -2,7 +2,6 @@ var moongoose = require('mongoose');
 var murl = "mongodb://localhost/bookmarks";
 var Book = require('./models/book.js');
 moongoose.connect(murl,function (params) {
-    console.log("connected to db %s",params);
     moongoose.connection.db.dropDatabase();
     var books = [
         { id: 1, name: "Physics", bType: "TEXTBOOK", desc: "a textbook on physics ..", completePercentage: null, currentpage: 22 },

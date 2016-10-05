@@ -21436,7 +21436,7 @@
 	                ' React h20',
 	                React.createElement('input', { type: 'checkbox', checked: this.state.allowAdd, onChange: this.toggleAdd })
 	            ),
-	            React.createElement(BookmarkList, { allowAdd: this.state.allowAdd })
+	            React.createElement(BookmarkList, { allowAdd: this.state.allowAdd, list: [] })
 	        );
 	    }
 
@@ -21456,9 +21456,11 @@
 	var BookmarkList = React.createClass({
 	    displayName: 'BookmarkList',
 	    componentWillMount: function componentWillMount() {
+	        debugger;
 	        bookstore.on('change', this.refresh);
 	    },
 	    refresh: function refresh() {
+	        debugger;
 	        this.setState({ list: bookstore.getAll(),
 	            input: "" });
 	    },
@@ -21471,7 +21473,7 @@
 	    },
 	    getInitialState: function getInitialState() {
 	        return {
-	            list: bookstore.getAll(),
+	            list: this.props.list,
 	            input: ""
 	        };
 	    },
@@ -21484,7 +21486,6 @@
 	                'ul',
 	                { className: 'list-group' },
 	                this.state.list.map(function (item, i) {
-	                    console.log(item);
 	                    return React.createElement(Bookmark, { item: item, key: "item" + i });
 	                })
 	            ),
@@ -21608,12 +21609,10 @@
 	module.exports = {
 	    register: function register(cb) {
 	        var id = _guid2.default.raw();
-	        console.log('adding');
 	        listeners[id] = cb;
 	        return id;
 	    },
 	    dispatch: function dispatch(payload) {
-	        console.log(listeners);
 	        for (var id in listeners) {
 	            listeners[id](payload);
 	        }
@@ -21758,7 +21757,7 @@
 	        key: "deleteBook",
 	        value: function deleteBook(book) {
 	            var index = this.BookList.findIndex(function (_item) {
-	                return _item.id === book.id;
+	                return _item._id === book._id;
 	            });
 	            this.BookList.splice(index, 1);
 	            this.emit("change");
@@ -21787,7 +21786,6 @@
 
 	var bookmarkStore = new BookmarkStore();
 	_dispatcher2.default.register(bookmarkStore.handleActions.bind(bookmarkStore));
-	window.diso = _dispatcher2.default;
 	module.exports = bookmarkStore;
 
 /***/ },
@@ -32369,11 +32367,10 @@
 	  _classCallCheck(this, Book);
 
 	  this.name = name;
-	  this.type = type;
+	  this.bType = type;
 	  this.desc = desc;
 	  this.completePercentage = completePercentage || null;
 	  this.currentpage = currentpage || null;
-	  this.id = Date.now();
 	};
 
 	module.exports = Book;

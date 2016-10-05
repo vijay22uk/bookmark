@@ -29,7 +29,7 @@ class BookmarkStore extends EventEmitter {
     }
     deleteBook(book){
         var index = this.BookList.findIndex(function(_item) {
-            return _item.id ===book.id;
+            return _item._id ===book._id;
         });
         this.BookList.splice(index,1);
         this.emit("change");
@@ -51,5 +51,4 @@ class BookmarkStore extends EventEmitter {
 }
 const bookmarkStore = new BookmarkStore();
 dispatcher.register(bookmarkStore.handleActions.bind(bookmarkStore))
-window.diso = dispatcher;
 module.exports = bookmarkStore;

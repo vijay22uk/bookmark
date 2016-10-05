@@ -4,9 +4,11 @@ var bookstore = require("../stores/BookmarkStore");
 var action = require("../actions/book");
 var BookmarkList = React.createClass({
     componentWillMount() {
+        debugger
         bookstore.on('change', this.refresh);
     },
     refresh(){
+        debugger
         this.setState({ list:  bookstore.getAll(),
             input:"" });
     },
@@ -19,7 +21,7 @@ var BookmarkList = React.createClass({
     },
     getInitialState() {
         return {
-            list: bookstore.getAll(),
+            list: this.props.list,
             input: ""
         }
     },
@@ -28,7 +30,6 @@ var BookmarkList = React.createClass({
             <ul className="list-group">
                 {
                     this.state.list.map(function (item, i) {
-                        console.log(item);
                         return (
                             <Bookmark item={item} key={"item" + i} />
                         )

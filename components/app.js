@@ -16,7 +16,7 @@ var App = React.createClass({
             return (<div className ="container-fluid"> <h1> React h20   
             <input type="checkbox"  checked={this.state.allowAdd} onChange={this.toggleAdd}/>
             </h1>
-            <BookmarkList allowAdd = {this.state.allowAdd}/> 
+            <BookmarkList allowAdd = {this.state.allowAdd} list={[]} /> 
             </div>);
     }
 

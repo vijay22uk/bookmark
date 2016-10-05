@@ -11,7 +11,7 @@ module.exports = function (app) {
         var _book = req.body;
         var book = new Book(_book);
         book.save(function (err,doc) {
-            res.status(300).send();
+            res.status(200).send();
         });
     })
 }
